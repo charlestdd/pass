@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Mini Game</title>
+    <style>
+        body { text-align: center; font-family: sans-serif; background: #f0f0f0; }
+        button { padding: 20px; font-size: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Clicker Game!</h1>
+    <p>Score: <span id="score">0</span></p>
+    <button onclick="updateScore()">Click Me!</button>
+
+    <script>
+        let count = 0;
+        function updateScore() {
+            count++;
+            document.getElementById('score').innerText = count;
+        }
+    </script>
+</body>
+</html>
