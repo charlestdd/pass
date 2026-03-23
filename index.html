@@ -2,155 +2,283 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Cosmic Gate: Summoner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Gate: Ascension</title>
     <style>
         :root {
-            --common: #b2bec3; --rare: #0984e3; --epic: #6c5ce7; --legendary: #fdcb6e; --mythic: #d63031;
-            --order: #74b9ff; --chaos: #a29bfe; --creation: #55efc4; --destruction: #ff7675;
+            --bg: #020617; --glass: rgba(30, 41, 59, 0.7); --gold: #fbbf24;
+            --order: #38bdf8; --chaos: #a78bfa; --creation: #34d399; --destruction: #fb7185;
+            --common: #94a3b8; --epic: #c084fc; --legend: #fbbf24;
         }
         body {
-            font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 100vh; margin: 0; overflow: hidden;
+            margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg);
+            color: white; overflow: hidden; height: 100vh; display: flex;
         }
-        .ui-panel {
-            background: rgba(30, 41, 59, 0.8); padding: 20px; border-radius: 20px;
-            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
-            text-align: center; width: 350px; z-index: 10;
+        /* Side Navigation */
+        nav {
+            width: 80px; background: rgba(15, 23, 42, 0.9); border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex; flex-direction: column; align-items: center; padding-top: 20px; z-index: 10;
         }
-        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; }
-        .timer { font-size: 0.8em; color: #94a3b8; }
+        .nav-item {
+            width: 50px; height: 50px; margin-bottom: 20px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; transition: 0.3s; font-size: 20px;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.1); color: var(--gold); }
+        .active-nav { background: var(--gold) !important; color: var(--bg) !important; }
+
+        /* Main Content Area */
+        main { flex: 1; position: relative; padding: 20px; overflow-y: auto; }
+        .frame { display: none; animation: fadeIn 0.4s ease-out; }
+        .active-frame { display: block; }
+
+        /* Top Bar Resources */
+        .top-bar {
+            position: absolute; top: 20px; right: 20px; display: flex; gap: 15px;
+            background: var(--glass); padding: 10px 20px; border-radius: 50px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); z-index: 5;
+        }
+        .res { display: flex; align-items: center; gap: 8px; font-weight: bold; }
+
+        /* Celestial UI Elements */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        .item-card {
+            background: var(--glass); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);
+            text-align: center; position: relative;
+        }
+        .rarity-5 { border-color: var(--gold); box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); }
         
         button {
-            background: linear-gradient(45deg, #3498db, #2980b9); color: white;
-            border: none; padding: 15px 30px; border-radius: 50px; cursor: pointer;
-            font-size: 1.1em; transition: 0.3s; width: 100%;
+            background: linear-gradient(135deg, #6366f1, #a855f7); color: white;
+            border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer;
+            font-weight: bold; transition: 0.2s;
         }
-        button:disabled { background: #475569; cursor: not-allowed; }
+        button:hover { transform: scale(1.05); filter: brightness(1.2); }
+        button:disabled { background: #475569; opacity: 0.5; }
 
-        /* The Summoning Animation */
-        #gate {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: none; align-items: center; justify-content: center;
-            z-index: 100; transition: 0.5s;
-        }
-        .character-card {
-            background: white; color: #1e293b; padding: 30px; border-radius: 15px;
-            text-align: center; transform: scale(0.5); opacity: 0;
-            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .active-card { transform: scale(1); opacity: 1; }
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .type-badge { padding: 4px 10px; border-radius: 5px; font-size: 0.8em; color: white; margin-top: 10px; display: inline-block; }
+        /* The Summon Gate overlay */
+        #summon-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%; background: var(--bg);
+            z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
     </style>
 </head>
 <body>
 
-    <div class="ui-panel">
-        <h1>Cosmic Gate</h1>
-        <div class="stats">
-            <span>Wishes: <span id="wishCount">10</span></span>
-            <span id="pityCount" style="font-size: 0.7em; align-self: center;">Pity: 0/80</span>
-        </div>
-        <div class="timer">Next wish in: <span id="timerText">30s</span></div>
-        <br>
-        <button id="pullBtn" onclick="summon()">SUMMON</button>
+    <nav>
+        <div class="nav-item active-nav" onclick="showFrame(1, this)">✦</div>
+        <div class="nav-item" onclick="showFrame(2, this)">✧</div>
+        <div class="nav-item" onclick="showFrame(3, this)">⚔️</div>
+        <div class="nav-item" onclick="showFrame(4, this)">💎</div>
+        <div class="nav-item" onclick="showFrame(5, this)">❂</div>
+        <div class="nav-item" onclick="showFrame(6, this)">🌀</div>
+    </nav>
+
+    <div class="top-bar">
+        <div class="res">🟡 <span id="coins-display">0</span></div>
+        <div class="res">🔷 <span id="orbs-display">0</span></div>
+        <div class="res" style="font-size: 0.8em; color: #94a3b8;">Next: <span id="timer-display">30</span>s</div>
     </div>
 
-    <div id="gate">
-        <div id="card" class="character-card">
-            <h2 id="resultName">???</h2>
-            <div id="resultType" class="type-badge">TYPE</div>
-            <p id="resultRarity">Rarity</p>
-            <button onclick="closeGate()" style="margin-top:20px; padding:10px;">Confirm</button>
+    <main>
+        <div id="frame-1" class="frame active-frame">
+            <h2>The Celestial Archive</h2>
+            <div class="card-grid" id="archive-list"></div>
         </div>
+
+        <div id="frame-2" class="frame" style="text-align: center; padding-top: 10vh;">
+            <h1 style="font-size: 3em; color: var(--gold);">HERO'S GATE</h1>
+            <p>1 Diamond Orb per Summon</p>
+            <p id="pity-ui">Pity: 0/80</p>
+            <button onclick="summon('char')">SUMMON UNIT</button>
+        </div>
+
+        <div id="frame-3" class="frame" style="text-align: center; padding-top: 10vh;">
+            <h1 style="font-size: 3em; color: var(--order);">ARMORY FORGE</h1>
+            <p>160 Golden Coins per Forge</p>
+            <button onclick="summon('weapon')">FORGE WEAPON</button>
+        </div>
+
+        <div id="frame-4" class="frame">
+            <h2>The Exchange</h2>
+            <div class="item-card" style="max-width: 300px; margin: auto;">
+                <h3>Convert Coins</h3>
+                <p>160 🟡 → 1 🔷</p>
+                <p id="cooldown-ui" style="color: var(--destruction);"></p>
+                <button id="convert-btn" onclick="convertCurrency()">Convert (Max 10)</button>
+            </div>
+        </div>
+
+        <div id="frame-5" class="frame">
+            <h2>Sanctuary of Ascension</h2>
+            <p>Select an owned unit to level up using duplicates.</p>
+            <div id="sanctuary-list" class="card-grid"></div>
+        </div>
+
+        <div id="frame-6" class="frame">
+            <h2>Rift Expeditions</h2>
+            <div id="expedition-list" style="display: flex; flex-direction: column; gap: 15px;"></div>
+        </div>
+    </main>
+
+    <div id="summon-overlay">
+        <h1 id="summon-reveal-name" style="font-size: 4em;"></h1>
+        <h3 id="summon-reveal-rarity"></h3>
+        <button onclick="closeSummon()" style="margin-top: 40px;">CONFIRM</button>
     </div>
 
 <script>
-    // DATA
-    const data = {
-        characters: [
-            { name: "Senzuku Sakuri", type: "Order", rank: 5 }, { name: "Kasumi Kurogane", type: "Chaos", rank: 5 },
-            { name: "Noriko Hoshino", type: "Creation", rank: 5 }, { name: "Rogu Kurai", type: "Destruction", rank: 5 },
-            { name: "Caleb Lukas", type: "Order", rank: 4 }, { name: "Rin Vance", type: "Chaos", rank: 4 },
-            { name: "Hinari Shirogane", type: "Destruction", rank: 4 }, { name: "Kathleen Damascus", type: "Creation", rank: 4 }
-        ],
-        weapons: [
-            { name: "Binding Contract", type: "Order", rank: 3 }, { name: "Dimension Restriction", type: "Order", rank: 3 },
-            { name: "Absolute Lock", type: "Order", rank: 3 }, { name: "Perfect Interval", type: "Order", rank: 3 },
-            { name: "Multiple Existence", type: "Chaos", rank: 3 }, { name: "Dimension Expansion", type: "Chaos", rank: 3 },
-            { name: "Reaction Modification", type: "Chaos", rank: 3 }, { name: "Instability Surge", type: "Chaos", rank: 3 },
-            { name: "Wu Summoning", type: "Creation", rank: 3 }, { name: "Dimension Creation", type: "Creation", rank: 3 },
-            { name: "Puppeteer", type: "Creation", rank: 3 }, { name: "Constellation Link", type: "Creation", rank: 3 },
-            { name: "Final Merge", type: "Destruction", rank: 3 }, { name: "Dimension Overload", type: "Destruction", rank: 3 },
-            { name: "Precise Collapsion", type: "Destruction", rank: 3 }, { name: "Extreme Rupture", type: "Destruction", rank: 3 }
-        ]
+    // --- GAME DATA ---
+    const CHARACTERS = [
+        { id: 'sen', name: "Senzuku Sakuri", type: "Order", stars: 5, hp: 1200, dmg: 150 },
+        { id: 'kas', name: "Kasumi Kurogane", type: "Chaos", stars: 5, hp: 1000, dmg: 180 },
+        { id: 'nor', name: "Noriko Hoshino", type: "Creation", stars: 5, hp: 1100, dmg: 160 },
+        { id: 'rog', name: "Rogu Kurai", type: "Destruction", stars: 5, hp: 900, dmg: 210 },
+        { id: 'cal', name: "Caleb Lukas", type: "Order", stars: 4, hp: 850, dmg: 110 },
+        { id: 'rin', name: "Rin Vance", type: "Chaos", stars: 4, hp: 750, dmg: 130 },
+        { id: 'kat', name: "Kathleen Damascus", type: "Creation", stars: 4, hp: 900, dmg: 105 },
+        { id: 'hin', name: "Hinari Shirogane", type: "Destruction", stars: 4, hp: 700, dmg: 145 }
+    ];
+
+    const WEAPONS = [
+        { id: 'w1', name: "Binding Contract", type: "Order", boost: "Coins 2x", stars: 3 },
+        { id: 'w2', name: "Multiple Existence", type: "Chaos", boost: "Exp 2x", stars: 3 },
+        { id: 'w3', name: "Wu Summoning", type: "Creation", boost: "Wish 2x", stars: 3 },
+        { id: 'w4', name: "Final Merge", type: "Destruction", boost: "Rift 2x", stars: 3 }
+        // ... more weapons can be added here
+    ];
+
+    // --- STATE & SAVE SYSTEM ---
+    let state = JSON.parse(localStorage.getItem('cosmicSave')) || {
+        coins: 500, orbs: 10, pity: 0, 
+        owned: {}, // { id: count }
+        conversions: 0, lastConv: 0
     };
 
-    let wishes = 10;
-    let pity = 0;
-    let fourStarPity = 0;
-    let timeLeft = 30;
+    function save() { localStorage.setItem('cosmicSave', JSON.stringify(state)); updateUI(); }
 
-    // TIMER SYSTEM
+    // --- TIMER & CURRENCY ---
+    let timeLeft = 30;
     setInterval(() => {
         timeLeft--;
-        if(timeLeft <= 0) {
-            wishes++;
-            timeLeft = 30;
-            updateUI();
+        if(timeLeft <= 0) { timeLeft = 30; state.coins += 50; save(); }
+        document.getElementById('timer-display').innerText = timeLeft;
+        
+        // Handle shop cooldown
+        let now = Date.now();
+        if(state.conversions >= 10 && now - state.lastConv < 60000) {
+            document.getElementById('convert-btn').disabled = true;
+            document.getElementById('cooldown-ui').innerText = `Cooldown: ${Math.ceil((60000 - (now - state.lastConv))/1000)}s`;
+        } else if (state.conversions >= 10) {
+            state.conversions = 0; save();
+        } else {
+            document.getElementById('convert-btn').disabled = false;
+            document.getElementById('cooldown-ui').innerText = "";
         }
-        document.getElementById('timerText').innerText = timeLeft + "s";
     }, 1000);
 
-    function updateUI() {
-        document.getElementById('wishCount').innerText = wishes;
-        document.getElementById('pityCount').innerText = `Pity: ${pity}/80`;
+    function convertCurrency() {
+        if(state.coins >= 160) {
+            state.coins -= 160; state.orbs += 1; state.conversions++;
+            if(state.conversions === 10) state.lastConv = Date.now();
+            save();
+        }
     }
 
-    // SUMMON SYSTEM
-    function summon() {
-        if(wishes < 1) return;
-        wishes--;
-        pity++;
-        fourStarPity++;
-        updateUI();
+    // --- NAVIGATION ---
+    function showFrame(id, el) {
+        document.querySelectorAll('.frame').forEach(f => f.classList.remove('active-frame'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
+        document.getElementById('frame-'+id).classList.add('active-frame');
+        el.classList.add('active-nav');
+        if(id === 1) renderArchive();
+        if(id === 5) renderSanctuary();
+    }
+
+    // --- SUMMON LOGIC ---
+    function summon(type) {
+        if(type === 'char' && state.orbs < 1) return;
+        if(type === 'weapon' && state.coins < 160) return;
+
+        if(type === 'char') { state.orbs--; state.pity++; } else { state.coins -= 160; }
 
         let result;
         let roll = Math.random() * 100;
 
-        // Pity Logic
-        if(pity >= 80) { result = getRand(data.characters.filter(c => c.rank === 5)); pity = 0; }
-        else if(fourStarPity >= 10) { result = getRand(data.characters.filter(c => c.rank === 4)); fourStarPity = 0; }
-        else if(roll < 1.6) { result = getRand(data.characters.filter(c => c.rank === 5)); pity = 0; }
-        else if(roll < 12) { result = getRand(data.characters.filter(c => c.rank === 4)); fourStarPity = 0; }
-        else { result = getRand(data.weapons); }
+        if(type === 'char') {
+            if(state.pity >= 80 || roll < 1.6) { 
+                result = CHARACTERS.filter(c => c.stars === 5)[Math.floor(Math.random()*4)];
+                state.pity = 0;
+            } else if (roll < 12) {
+                result = CHARACTERS.filter(c => c.stars === 4)[Math.floor(Math.random()*4)];
+            } else {
+                result = WEAPONS[Math.floor(Math.random()*WEAPONS.length)];
+            }
+        } else {
+            result = WEAPONS[Math.floor(Math.random()*WEAPONS.length)];
+        }
 
-        showAnimation(result);
+        state.owned[result.id] = (state.owned[result.id] || 0) + 1;
+        save();
+        showSummon(result);
     }
 
-    function getRand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-    function showAnimation(item) {
-        const gate = document.getElementById('gate');
-        const card = document.getElementById('card');
-        const colors = { 3: '#0984e3', 4: '#6c5ce7', 5: '#fdcb6e' };
-        
-        gate.style.display = 'flex';
-        gate.style.background = colors[item.rank];
-        
-        document.getElementById('resultName').innerText = item.name;
-        document.getElementById('resultRarity').innerText = "⭐".repeat(item.rank);
-        document.getElementById('resultType').innerText = item.type;
-        document.getElementById('resultType').style.backgroundColor = `var(--${item.type.toLowerCase()})`;
-
-        setTimeout(() => { card.classList.add('active-card'); }, 100);
+    function showSummon(item) {
+        const overlay = document.getElementById('summon-overlay');
+        const colors = { 3: 'var(--order)', 4: 'var(--epic)', 5: 'var(--legend)' };
+        overlay.style.display = 'flex';
+        overlay.style.boxShadow = `inset 0 0 100px ${colors[item.stars]}`;
+        document.getElementById('summon-reveal-name').innerText = item.name;
+        document.getElementById('summon-reveal-name').style.color = colors[item.stars];
+        document.getElementById('summon-reveal-rarity').innerText = "⭐".repeat(item.stars);
     }
 
-    function closeGate() {
-        document.getElementById('gate').style.display = 'none';
-        document.getElementById('card').classList.remove('active-card');
+    function closeSummon() { document.getElementById('summon-overlay').style.display = 'none'; }
+
+    // --- UI RENDERING ---
+    function updateUI() {
+        document.getElementById('coins-display').innerText = state.coins;
+        document.getElementById('orbs-display').innerText = state.orbs;
+        document.getElementById('pity-ui').innerText = `Pity: ${state.pity}/80`;
     }
+
+    function renderArchive() {
+        const list = document.getElementById('archive-list');
+        list.innerHTML = "";
+        [...CHARACTERS, ...WEAPONS].forEach(item => {
+            const count = state.owned[item.id] || 0;
+            list.innerHTML += `
+                <div class="item-card ${count > 0 ? 'rarity-'+item.stars : ''}" style="opacity: ${count > 0 ? 1 : 0.4}">
+                    <div style="font-size:0.7em">${item.type}</div>
+                    <strong>${item.name}</strong>
+                    <div>${count > 0 ? 'Lv. '+count : 'LOCKED'}</div>
+                </div>`;
+        });
+    }
+
+    function renderSanctuary() {
+        const list = document.getElementById('sanctuary-list');
+        list.innerHTML = "";
+        CHARACTERS.forEach(c => {
+            const count = state.owned[c.id] || 0;
+            if(count > 1) {
+                list.innerHTML += `
+                    <div class="item-card rarity-${c.stars}">
+                        <h3>${c.name}</h3>
+                        <p>Duplicates: ${count - 1}</p>
+                        <p>Stats: HP ${c.hp + (count*100)} / ATK ${c.dmg + (count*10)}</p>
+                    </div>`;
+            }
+        });
+        if(list.innerHTML === "") list.innerHTML = "<p>No duplicates found. Keep summoning!</p>";
+    }
+
+    // Initialize
+    save();
+    renderArchive();
 </script>
 </body>
 </html>
