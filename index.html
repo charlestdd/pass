@@ -1,23 +1,265 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Mini Game</title>
+    <title>Wishing Calculus</title>
     <style>
-        body { text-align: center; font-family: sans-serif; background: #f0f0f0; }
-        button { padding: 20px; font-size: 20px; cursor: pointer; }
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f2f5; /* Clean modern background */
+            color: #333;
+            margin: 0;
+            overflow: hidden; /* For particle effects */
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative; /* For item display */
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        p {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            margin-top: 20px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+        button:active {
+            transform: translateY(1px);
+        }
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all 0.5s ease-out; /* Smooth transition for result changes */
+        }
+        .item-name {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            animation: fadeInScale 0.6s ease-out; /* Animation for item reveal */
+        }
+        .item-rarity {
+            font-size: 1.1em;
+            color: #777;
+            font-style: italic;
+            animation: fadeIn 0.8s ease-out;
+        }
+        /* Rarity colors */
+        .common { color: #6c757d; } /* Grey */
+        .uncommon { color: #28a745; } /* Green */
+        .rare { color: #17a2b8; } /* Cyan */
+        .epic { color: #6f42c1; } /* Purple */
+        .legendary { color: #ffc107; } /* Gold */
+        .mythic { color: #dc3545; } /* Red - Super Rare */
+
+        /* Particle Effects (CSS only for simplicity) */
+        .particle-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows clicks to pass through */
+            overflow: hidden;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            background-color: currentColor; /* Inherits color from parent */
+            border-radius: 50%;
+            opacity: 0;
+            animation: particleFadeOut 1s forwards ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes particleFadeOut {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(0); }
+        }
     </style>
 </head>
 <body>
-    <h1>Clicker Game!</h1>
-    <p>Score: <span id="score">0</span></p>
-    <button onclick="updateScore()">Click Me!</button>
+    <div class="container">
+        <h1>Cosmic Pull Simulator</h1>
+        <p>You have <span id="wishes">10</span> wishes left.</p>
+        <button id="pullButton">Make a Cosmic Pull!</button>
+        
+        <div id="result">
+            <p>Pull to reveal your cosmic entity!</p>
+        </div>
+        <p id="totalPulls">Total pulls: 0</p>
+    </div>
+
+    <div class="particle-container"></div>
 
     <script>
-        let count = 0;
-        function updateScore() {
-            count++;
-            document.getElementById('score').innerText = count;
+        const wishesSpan = document.getElementById('wishes');
+        const pullButton = document.getElementById('pullButton');
+        const resultDiv = document.getElementById('result');
+        const totalPullsSpan = document.getElementById('totalPulls');
+        const particleContainer = document.querySelector('.particle-container');
+
+        let wishesLeft = 10;
+        let totalPulls = 0;
+
+        // Define items with their rarity
+        const items = [
+            // Common (60%)
+            { name: "Dust Cloud", rarity: "Common", color: "common" },
+            { name: "Asteroid Field", rarity: "Common", color: "common" },
+            { name: "Distant Comet", rarity: "Common", color: "common" },
+            { name: "Faint Pulsar", rarity: "Common", color: "common" },
+            // Uncommon (25%)
+            { name: "Nebula Stream", rarity: "Uncommon", color: "uncommon" },
+            { name: "Lunar Fragment", rarity: "Uncommon", color: "uncommon" },
+            { name: "Gas Giant Moon", rarity: "Uncommon", color: "uncommon" },
+            // Rare (10%)
+            { name: "Rogue Planet", rarity: "Rare", color: "rare" },
+            { name: "Binary Star System", rarity: "Rare", color: "rare" },
+            // Epic (4%)
+            { name: "Supernova Remnant", rarity: "Epic", color: "epic" },
+            { name: "Proto-Galaxy", rarity: "Epic", color: "epic" },
+            // Legendary (0.9%)
+            { name: "Singularity Fragment", rarity: "Legendary", color: "legendary" },
+            // Mythic (0.1%) - The "system beating" item!
+            { name: "Cosmic Seed of Creation", rarity: "Mythic", color: "mythic" }
+        ];
+
+        function makeCosmicPull() {
+            if (wishesLeft <= 0) {
+                pullButton.disabled = true;
+                pullButton.textContent = "No Wishes Left!";
+                return;
+            }
+
+            wishesLeft--;
+            totalPulls++;
+            wishesSpan.textContent = wishesLeft;
+            totalPullsSpan.textContent = `Total pulls: ${totalPulls}`;
+
+            let pulledItem = getRandomItemByRarity();
+            
+            resultDiv.innerHTML = `
+                <span class="item-name ${pulledItem.color}">${pulledItem.name}</span>
+                <span class="item-rarity">Rarity: ${pulledItem.rarity}</span>
+            `;
+            
+            // Generate particle effects at the pull button's position
+            createParticles(pullButton.getBoundingClientRect(), pulledItem.color);
+
+            if (wishesLeft === 0) {
+                pullButton.disabled = true;
+                pullButton.textContent = "No Wishes Left!";
+            }
         }
+
+        function getRandomItemByRarity() {
+            const rand = Math.random() * 100; // 0 to 99.99...
+            
+            if (rand < 0.1) return getItemByName("Cosmic Seed of Creation"); // 0.1%
+            if (rand < 1) return getItemByName("Singularity Fragment"); // 0.9% + 0.1% = 1%
+            if (rand < 5) return getRandomItemByRarityGroup("Epic"); // 4% + 1% = 5%
+            if (rand < 15) return getRandomItemByRarityGroup("Rare"); // 10% + 5% = 15%
+            if (rand < 40) return getRandomItemByRarityGroup("Uncommon"); // 25% + 15% = 40%
+            return getRandomItemByRarityGroup("Common"); // 60% + 40% = 100%
+        }
+
+        function getItemByName(name) {
+            return items.find(item => item.name === name);
+        }
+
+        function getRandomItemByRarityGroup(rarity) {
+            const group = items.filter(item => item.rarity === rarity);
+            return group[Math.floor(Math.random() * group.length)];
+        }
+
+        function createParticles(rect, rarityColorClass) {
+            const numParticles = 15; // More particles for more impact
+            const color = getComputedStyle(document.documentElement).getPropertyValue(`--${rarityColorClass}-color`) || getComputedStyle(resultDiv).getPropertyValue(`color`); // Try to get CSS variable or default
+            
+            for (let i = 0; i < numParticles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = particle.style.height = `${Math.random() * 8 + 4}px`; // Size 4-12px
+                
+                // Position particles near the button, not just top-left
+                particle.style.left = `${rect.left + rect.width / 2 + (Math.random() - 0.5) * rect.width}px`;
+                particle.style.top = `${rect.top + rect.height / 2 + (Math.random() - 0.5) * rect.height}px`;
+
+                // Set particle color based on item rarity
+                // This is a bit tricky with dynamic CSS classes, so let's map them explicitly
+                let particleColor = '#6c757d'; // Default common color
+                switch(rarityColorClass) {
+                    case 'uncommon': particleColor = '#28a745'; break;
+                    case 'rare': particleColor = '#17a2b8'; break;
+                    case 'epic': particleColor = '#6f42c1'; break;
+                    case 'legendary': particleColor = '#ffc107'; break;
+                    case 'mythic': particleColor = '#dc3545'; break;
+                }
+                particle.style.backgroundColor = particleColor;
+
+                // Add a random duration and delay for varied animation
+                particle.style.animationDuration = `${Math.random() * 0.7 + 0.8}s`; // 0.8s to 1.5s
+                particle.style.animationDelay = `${Math.random() * 0.1}s`; // Small random delay
+                
+                particleContainer.appendChild(particle);
+
+                // Remove particle after animation to prevent DOM clutter
+                particle.addEventListener('animationend', () => particle.remove());
+            }
+        }
+
+        pullButton.addEventListener('click', makeCosmicPull);
+
+        // Set initial wishes display
+        wishesSpan.textContent = wishesLeft;
     </script>
 </body>
 </html>
