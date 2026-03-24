@@ -54,7 +54,7 @@
             font-weight: bold; transition: 0.2s;
         }
         button:hover { transform: scale(1.05); filter: brightness(1.2); }
-        button:disabled { background: #475569; opacity: 0.5; }
+        button:disabled { background: #475569; opacity: 0.5; cursor: not-allowed; }
 
         /* Animations */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -98,7 +98,7 @@
 
         <div id="frame-3" class="frame" style="text-align: center; padding-top: 10vh;">
             <h1 style="font-size: 3em; color: var(--order);">ARMORY FORGE</h1>
-            <p>160 Golden Coins per Forge</p>
+            <p>120 Golden Coins per Forge</p>
             <button onclick="summon('weapon')">FORGE WEAPON</button>
         </div>
 
@@ -120,7 +120,8 @@
 
         <div id="frame-6" class="frame">
             <h2>Rift Expeditions</h2>
-            <div id="expedition-list" style="display: flex; flex-direction: column; gap: 15px;"></div>
+            <p>Deploy units to collect resources over time.</p>
+            <div id="expedition-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;"></div>
         </div>
     </main>
 
@@ -148,17 +149,26 @@
         { id: 'w2', name: "Multiple Existence", type: "Chaos", boost: "Exp 2x", stars: 3 },
         { id: 'w3', name: "Wu Summoning", type: "Creation", boost: "Wish 2x", stars: 3 },
         { id: 'w4', name: "Final Merge", type: "Destruction", boost: "Rift 2x", stars: 3 }
-        // ... more weapons can be added here
+    ];
+
+    const MISSIONS = [
+        { id: 'm1', name: "Nebula Outskirts", duration: 60, reward: 200, icon: "🌌" },
+        { id: 'm2', name: "Void Breach", duration: 300, reward: 1200, icon: "🌑" },
+        { id: 'm3', name: "Celestial Core", duration: 1800, reward: 5000, icon: "☀️" }
     ];
 
     // --- STATE & SAVE SYSTEM ---
     let state = JSON.parse(localStorage.getItem('cosmicSave')) || {
         coins: 500, orbs: 10, pity: 0, 
-        owned: {}, // { id: count }
-        conversions: 0, lastConv: 0
+        owned: {}, 
+        conversions: 0, lastConv: 0,
+        activeMissions: {} // { missionId: endTime }
     };
 
-    function save() { localStorage.setItem('cosmicSave', JSON.stringify(state)); updateUI(); }
+    function save() { 
+        localStorage.setItem('cosmicSave', JSON.stringify(state)); 
+        updateUI(); 
+    }
 
     // --- TIMER & CURRENCY ---
     let timeLeft = 30;
@@ -167,8 +177,8 @@
         if(timeLeft <= 0) { timeLeft = 30; state.coins += 50; save(); }
         document.getElementById('timer-display').innerText = timeLeft;
         
-        // Handle shop cooldown
         let now = Date.now();
+        // Shop Cooldown
         if(state.conversions >= 10 && now - state.lastConv < 60000) {
             document.getElementById('convert-btn').disabled = true;
             document.getElementById('cooldown-ui').innerText = `Cooldown: ${Math.ceil((60000 - (now - state.lastConv))/1000)}s`;
@@ -177,6 +187,11 @@
         } else {
             document.getElementById('convert-btn').disabled = false;
             document.getElementById('cooldown-ui').innerText = "";
+        }
+
+        // Auto-refresh Rift list if on that screen
+        if(document.getElementById('frame-6').classList.contains('active-frame')) {
+            renderRifts();
         }
     }, 1000);
 
@@ -196,14 +211,17 @@
         el.classList.add('active-nav');
         if(id === 1) renderArchive();
         if(id === 5) renderSanctuary();
+        if(id === 6) renderRifts();
     }
 
     // --- SUMMON LOGIC ---
     function summon(type) {
+        const forgeCost = 120; // Lowered cost
         if(type === 'char' && state.orbs < 1) return;
-        if(type === 'weapon' && state.coins < 160) return;
+        if(type === 'weapon' && state.coins < forgeCost) return;
 
-        if(type === 'char') { state.orbs--; state.pity++; } else { state.coins -= 160; }
+        if(type === 'char') { state.orbs--; state.pity++; } 
+        else { state.coins -= forgeCost; }
 
         let result;
         let roll = Math.random() * 100;
@@ -237,6 +255,50 @@
     }
 
     function closeSummon() { document.getElementById('summon-overlay').style.display = 'none'; }
+
+    // --- EXPEDITION SYSTEM ---
+    function renderRifts() {
+        const list = document.getElementById('expedition-list');
+        list.innerHTML = "";
+        const now = Date.now();
+
+        MISSIONS.forEach(m => {
+            const endTime = state.activeMissions[m.id];
+            let actionBtn = "";
+
+            if (!endTime) {
+                actionBtn = `<button onclick="startMission('${m.id}')">Start Mission</button>`;
+            } else if (now < endTime) {
+                const secLeft = Math.ceil((endTime - now) / 1000);
+                actionBtn = `<button disabled style="background:#1e293b">${secLeft}s Left</button>`;
+            } else {
+                actionBtn = `<button onclick="claimMission('${m.id}')" style="background:var(--creation)">Claim Loot</button>`;
+            }
+
+            list.innerHTML += `
+                <div class="item-card">
+                    <div style="font-size: 2.5em; margin-bottom: 10px;">${m.icon}</div>
+                    <strong>${m.name}</strong>
+                    <p style="color:var(--gold)">Reward: ${m.reward} 🟡</p>
+                    ${actionBtn}
+                </div>`;
+        });
+    }
+
+    function startMission(id) {
+        const mission = MISSIONS.find(m => m.id === id);
+        state.activeMissions[id] = Date.now() + (mission.duration * 1000);
+        save();
+        renderRifts();
+    }
+
+    function claimMission(id) {
+        const mission = MISSIONS.find(m => m.id === id);
+        state.coins += mission.reward;
+        delete state.activeMissions[id];
+        save();
+        renderRifts();
+    }
 
     // --- UI RENDERING ---
     function updateUI() {
@@ -277,7 +339,7 @@
     }
 
     // Initialize
-    save();
+    updateUI();
     renderArchive();
 </script>
 </body>
