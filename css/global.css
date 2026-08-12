@@ -1,0 +1,261 @@
+/* =========================================
+   EXPOSITAE — GLOBAL STYLES
+========================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --black: #111111;
+    --white: #ffffff;
+    --paper: #f3f1ec;
+    --paper-dark: #e5e1d9;
+    --gray: #666666;
+    --light-gray: #cccccc;
+    --red: #a40000;
+    --dark-red: #760000;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: var(--paper);
+    color: var(--black);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    line-height: 1.7;
+}
+
+
+/* LINKS */
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+
+/* HEADER */
+
+.site-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.topline {
+    max-width: 1300px;
+    margin: auto;
+
+    padding: 10px 25px;
+
+    display: flex;
+    justify-content: space-between;
+
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+
+    color: var(--gray);
+}
+
+.brand {
+    text-align: center;
+    padding: 20px;
+}
+
+.brand a {
+    display: block;
+
+    font-size: clamp(50px, 8vw, 90px);
+    font-weight: 900;
+    line-height: 0.9;
+
+    letter-spacing: -5px;
+}
+
+.brand span {
+    display: block;
+
+    margin-top: 12px;
+
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 4px;
+
+    color: var(--gray);
+}
+
+
+/* NAVIGATION */
+
+.navigation {
+    border-top: 1px solid #ddd;
+
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.navigation a {
+    padding: 13px 18px;
+
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.navigation a:hover {
+    background: var(--black);
+    color: var(--white);
+}
+
+
+/* BREAKING */
+
+.breaking {
+    display: flex;
+    align-items: center;
+
+    background: var(--red);
+    color: var(--white);
+
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+}
+
+.breaking strong {
+    padding: 10px 17px;
+    background: var(--dark-red);
+}
+
+.breaking span {
+    padding: 10px 17px;
+}
+
+
+/* CATEGORY */
+
+.category {
+    display: inline-block;
+
+    margin-bottom: 12px;
+
+    color: var(--red);
+
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+
+/* BUTTON */
+
+.read-button {
+    display: inline-block;
+
+    padding: 12px 18px;
+
+    background: var(--black);
+    color: var(--white);
+
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+
+    transition: 0.2s;
+}
+
+.read-button:hover {
+    background: var(--red);
+}
+
+
+/* FOOTER */
+
+.site-footer {
+    margin-top: 100px;
+
+    padding: 60px 25px;
+
+    background: var(--black);
+    color: var(--white);
+
+    text-align: center;
+}
+
+.footer-brand {
+    font-size: 45px;
+    font-weight: 900;
+    letter-spacing: -3px;
+}
+
+.site-footer p {
+    margin: 10px 0 25px;
+
+    color: #aaa;
+
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+
+    margin-bottom: 25px;
+}
+
+.footer-links a {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.footer-links a:hover {
+    color: #aaa;
+}
+
+.site-footer small {
+    color: #666;
+
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+
+    .topline {
+        padding: 9px 15px;
+    }
+
+    .navigation a {
+        padding: 9px;
+        font-size: 9px;
+    }
+
+    .brand a {
+        letter-spacing: -3px;
+    }
+
+    .breaking {
+        font-size: 9px;
+    }
+}
