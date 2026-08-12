@@ -3,344 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Gate: Ascension</title>
-    <style>
-        :root {
-            --bg: #020617; --glass: rgba(30, 41, 59, 0.7); --gold: #fbbf24;
-            --order: #38bdf8; --chaos: #a78bfa; --creation: #34d399; --destruction: #fb7185;
-            --common: #94a3b8; --epic: #c084fc; --legend: #fbbf24;
-        }
-        body {
-            margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg);
-            color: white; overflow: hidden; height: 100vh; display: flex;
-        }
-        /* Side Navigation */
-        nav {
-            width: 80px; background: rgba(15, 23, 42, 0.9); border-right: 1px solid rgba(255,255,255,0.1);
-            display: flex; flex-direction: column; align-items: center; padding-top: 20px; z-index: 10;
-        }
-        .nav-item {
-            width: 50px; height: 50px; margin-bottom: 20px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 12px; transition: 0.3s; font-size: 20px;
-        }
-        .nav-item:hover { background: rgba(255,255,255,0.1); color: var(--gold); }
-        .active-nav { background: var(--gold) !important; color: var(--bg) !important; }
 
-        /* Main Content Area */
-        main { flex: 1; position: relative; padding: 20px; overflow-y: auto; }
-        .frame { display: none; animation: fadeIn 0.4s ease-out; }
-        .active-frame { display: block; }
+    <title>Expositae — Investigations, Power & Accountability</title>
 
-        /* Top Bar Resources */
-        .top-bar {
-            position: absolute; top: 20px; right: 20px; display: flex; gap: 15px;
-            background: var(--glass); padding: 10px 20px; border-radius: 50px;
-            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); z-index: 5;
-        }
-        .res { display: flex; align-items: center; gap: 8px; font-weight: bold; }
-
-        /* Celestial UI Elements */
-        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-        .item-card {
-            background: var(--glass); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);
-            text-align: center; position: relative;
-        }
-        .rarity-5 { border-color: var(--gold); box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); }
-        
-        button {
-            background: linear-gradient(135deg, #6366f1, #a855f7); color: white;
-            border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer;
-            font-weight: bold; transition: 0.2s;
-        }
-        button:hover { transform: scale(1.05); filter: brightness(1.2); }
-        button:disabled { background: #475569; opacity: 0.5; cursor: not-allowed; }
-
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* The Summon Gate overlay */
-        #summon-overlay {
-            position: fixed; top:0; left:0; width:100%; height:100%; background: var(--bg);
-            z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center;
-        }
-    </style>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/homepage.css">
 </head>
+
 <body>
 
-    <nav>
-        <div class="nav-item active-nav" onclick="showFrame(1, this)">✦</div>
-        <div class="nav-item" onclick="showFrame(2, this)">✧</div>
-        <div class="nav-item" onclick="showFrame(3, this)">⚔️</div>
-        <div class="nav-item" onclick="showFrame(4, this)">💎</div>
-        <div class="nav-item" onclick="showFrame(5, this)">❂</div>
-        <div class="nav-item" onclick="showFrame(6, this)">🌀</div>
+<header class="site-header">
+
+    <div class="topline">
+        <span>WEDNESDAY, AUGUST 12, 2026</span>
+        <span>GODFALL EDITION</span>
+    </div>
+
+    <div class="brand">
+        <a href="index.html">EXPOSITAE</a>
+        <span>INVESTIGATIONS • POWER • ACCOUNTABILITY</span>
+    </div>
+
+    <nav class="navigation">
+        <a href="index.html">HOME</a>
+        <a href="sections/investigations.html">INVESTIGATIONS</a>
+        <a href="sections/politics.html">POLITICS</a>
+        <a href="sections/crime.html">CRIME</a>
+        <a href="sections/business.html">BUSINESS</a>
+        <a href="sections/royal-affairs.html">ROYAL AFFAIRS</a>
     </nav>
 
-    <div class="top-bar">
-        <div class="res">🟡 <span id="coins-display">0</span></div>
-        <div class="res">🔷 <span id="orbs-display">0</span></div>
-        <div class="res" style="font-size: 0.8em; color: #94a3b8;">Next: <span id="timer-display">30</span>s</div>
+</header>
+
+
+<div class="breaking">
+    <strong>BREAKING</strong>
+    <span>New disclosures emerge in the Hoskins investigation.</span>
+</div>
+
+
+<main class="homepage">
+
+    <section class="hero-story">
+
+        <span class="category">EXCLUSIVE INVESTIGATION</span>
+
+        <h1>
+            THE HOSKINS<br>
+            SCANDAL
+        </h1>
+
+        <p class="hero-subtitle">
+            The man behind the money, the name behind the man,
+            and the family behind the network.
+        </p>
+
+        <p class="hero-description">
+            An eighteen-month investigation into Andrew Hoskins,
+            the Delunt Mafia, the mysterious Drew Whitley fortune,
+            and the Vance-Romano network.
+        </p>
+
+        <a class="read-button" href="articles/hoskins-scandal.html">
+            READ THE INVESTIGATION →
+        </a>
+
+    </section>
+
+
+    <section class="featured-grid">
+
+        <article class="feature-card">
+
+            <span class="category">THE WHITLEY FILE</span>
+
+            <h2>
+                Who Was Drew Whitley?
+            </h2>
+
+            <p>
+                The mysterious name attached to approximately
+                one billion IC may not belong to who investigators
+                originally believed.
+            </p>
+
+            <a href="articles/drew-whitley.html">
+                READ MORE →
+            </a>
+
+        </article>
+
+
+        <article class="feature-card dark-card">
+
+            <span class="category">NETWORKS</span>
+
+            <h2>
+                Inside Vance-Romano
+            </h2>
+
+            <p>
+                How one of Godfall's most influential families
+                built a network stretching through international
+                commerce.
+            </p>
+
+            <a href="sections/business.html">
+                EXPLORE →
+            </a>
+
+        </article>
+
+    </section>
+
+
+    <section class="latest">
+
+        <div class="section-heading">
+            <span>LATEST</span>
+            <h2>INVESTIGATIONS</h2>
+        </div>
+
+        <div class="article-list">
+
+            <article>
+                <span class="category">CRIME</span>
+
+                <h3>
+                    The Delunt Connection
+                </h3>
+
+                <p>
+                    How Jake Delunt's former right-hand man
+                    survived the organization's collapse.
+                </p>
+
+                <a href="articles/hoskins-scandal.html">
+                    READ →
+                </a>
+            </article>
+
+
+            <article>
+                <span class="category">ROYAL AFFAIRS</span>
+
+                <h3>
+                    The Senior Prince Connection
+                </h3>
+
+                <p>
+                    Why the Vance-Romano relationship with
+                    Senior Prince Darius Shacklebolt has
+                    complicated the investigation.
+                </p>
+
+                <a href="sections/royal-affairs.html">
+                    READ →
+                </a>
+            </article>
+
+
+            <article>
+                <span class="category">IEJ</span>
+
+                <h3>
+                    Why Can't They Arrest Hoskins?
+                </h3>
+
+                <p>
+                    The legal structure making the alleged
+                    network so difficult to prosecute.
+                </p>
+
+                <a href="sections/investigations.html">
+                    READ →
+                </a>
+            </article>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer class="site-footer">
+
+    <div class="footer-brand">
+        EXPOSITAE
     </div>
 
-    <main>
-        <div id="frame-1" class="frame active-frame">
-            <h2>The Celestial Archive</h2>
-            <div class="card-grid" id="archive-list"></div>
-        </div>
+    <p>
+        Independent investigative journalism from Godfall.
+    </p>
 
-        <div id="frame-2" class="frame" style="text-align: center; padding-top: 10vh;">
-            <h1 style="font-size: 3em; color: var(--gold);">HERO'S GATE</h1>
-            <p>1 Diamond Orb per Summon</p>
-            <p id="pity-ui">Pity: 0/80</p>
-            <button onclick="summon('char')">SUMMON UNIT</button>
-        </div>
-
-        <div id="frame-3" class="frame" style="text-align: center; padding-top: 10vh;">
-            <h1 style="font-size: 3em; color: var(--order);">ARMORY FORGE</h1>
-            <p>120 Golden Coins per Forge</p>
-            <button onclick="summon('weapon')">FORGE WEAPON</button>
-        </div>
-
-        <div id="frame-4" class="frame">
-            <h2>The Exchange</h2>
-            <div class="item-card" style="max-width: 300px; margin: auto;">
-                <h3>Convert Coins</h3>
-                <p>160 🟡 → 1 🔷</p>
-                <p id="cooldown-ui" style="color: var(--destruction);"></p>
-                <button id="convert-btn" onclick="convertCurrency()">Convert (Max 10)</button>
-            </div>
-        </div>
-
-        <div id="frame-5" class="frame">
-            <h2>Sanctuary of Ascension</h2>
-            <p>Select an owned unit to level up using duplicates.</p>
-            <div id="sanctuary-list" class="card-grid"></div>
-        </div>
-
-        <div id="frame-6" class="frame">
-            <h2>Rift Expeditions</h2>
-            <p>Deploy units to collect resources over time.</p>
-            <div id="expedition-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;"></div>
-        </div>
-    </main>
-
-    <div id="summon-overlay">
-        <h1 id="summon-reveal-name" style="font-size: 4em;"></h1>
-        <h3 id="summon-reveal-rarity"></h3>
-        <button onclick="closeSummon()" style="margin-top: 40px;">CONFIRM</button>
+    <div class="footer-links">
+        <a href="#">ABOUT</a>
+        <a href="#">CONTACT</a>
+        <a href="#">ARCHIVE</a>
+        <a href="#">LEGAL</a>
     </div>
 
-<script>
-    // --- GAME DATA ---
-    const CHARACTERS = [
-        { id: 'sen', name: "Senzuku Sakuri", type: "Order", stars: 5, hp: 1200, dmg: 150 },
-        { id: 'kas', name: "Kasumi Kurogane", type: "Chaos", stars: 5, hp: 1000, dmg: 180 },
-        { id: 'nor', name: "Noriko Hoshino", type: "Creation", stars: 5, hp: 1100, dmg: 160 },
-        { id: 'rog', name: "Rogu Kurai", type: "Destruction", stars: 5, hp: 900, dmg: 210 },
-        { id: 'cal', name: "Caleb Lukas", type: "Order", stars: 4, hp: 850, dmg: 110 },
-        { id: 'rin', name: "Rin Vance", type: "Chaos", stars: 4, hp: 750, dmg: 130 },
-        { id: 'kat', name: "Kathleen Damascus", type: "Creation", stars: 4, hp: 900, dmg: 105 },
-        { id: 'hin', name: "Hinari Shirogane", type: "Destruction", stars: 4, hp: 700, dmg: 145 }
-    ];
+    <small>
+        © 2026 Expositae Investigative Media
+    </small>
 
-    const WEAPONS = [
-        { id: 'w1', name: "Binding Contract", type: "Order", boost: "Coins 2x", stars: 3 },
-        { id: 'w2', name: "Multiple Existence", type: "Chaos", boost: "Exp 2x", stars: 3 },
-        { id: 'w3', name: "Wu Summoning", type: "Creation", boost: "Wish 2x", stars: 3 },
-        { id: 'w4', name: "Final Merge", type: "Destruction", boost: "Rift 2x", stars: 3 }
-    ];
+</footer>
 
-    const MISSIONS = [
-        { id: 'm1', name: "Nebula Outskirts", duration: 60, reward: 200, icon: "🌌" },
-        { id: 'm2', name: "Void Breach", duration: 300, reward: 1200, icon: "🌑" },
-        { id: 'm3', name: "Celestial Core", duration: 1800, reward: 5000, icon: "☀️" }
-    ];
+<script src="js/main.js"></script>
 
-    // --- STATE & SAVE SYSTEM ---
-    let state = JSON.parse(localStorage.getItem('cosmicSave')) || {
-        coins: 500, orbs: 10, pity: 0, 
-        owned: {}, 
-        conversions: 0, lastConv: 0,
-        activeMissions: {} // { missionId: endTime }
-    };
-
-    function save() { 
-        localStorage.setItem('cosmicSave', JSON.stringify(state)); 
-        updateUI(); 
-    }
-
-    // --- TIMER & CURRENCY ---
-    let timeLeft = 30;
-    setInterval(() => {
-        timeLeft--;
-        if(timeLeft <= 0) { timeLeft = 30; state.coins += 50; save(); }
-        document.getElementById('timer-display').innerText = timeLeft;
-        
-        let now = Date.now();
-        // Shop Cooldown
-        if(state.conversions >= 10 && now - state.lastConv < 60000) {
-            document.getElementById('convert-btn').disabled = true;
-            document.getElementById('cooldown-ui').innerText = `Cooldown: ${Math.ceil((60000 - (now - state.lastConv))/1000)}s`;
-        } else if (state.conversions >= 10) {
-            state.conversions = 0; save();
-        } else {
-            document.getElementById('convert-btn').disabled = false;
-            document.getElementById('cooldown-ui').innerText = "";
-        }
-
-        // Auto-refresh Rift list if on that screen
-        if(document.getElementById('frame-6').classList.contains('active-frame')) {
-            renderRifts();
-        }
-    }, 1000);
-
-    function convertCurrency() {
-        if(state.coins >= 160) {
-            state.coins -= 160; state.orbs += 1; state.conversions++;
-            if(state.conversions === 10) state.lastConv = Date.now();
-            save();
-        }
-    }
-
-    // --- NAVIGATION ---
-    function showFrame(id, el) {
-        document.querySelectorAll('.frame').forEach(f => f.classList.remove('active-frame'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
-        document.getElementById('frame-'+id).classList.add('active-frame');
-        el.classList.add('active-nav');
-        if(id === 1) renderArchive();
-        if(id === 5) renderSanctuary();
-        if(id === 6) renderRifts();
-    }
-
-    // --- SUMMON LOGIC ---
-    function summon(type) {
-        const forgeCost = 120; // Lowered cost
-        if(type === 'char' && state.orbs < 1) return;
-        if(type === 'weapon' && state.coins < forgeCost) return;
-
-        if(type === 'char') { state.orbs--; state.pity++; } 
-        else { state.coins -= forgeCost; }
-
-        let result;
-        let roll = Math.random() * 100;
-
-        if(type === 'char') {
-            if(state.pity >= 80 || roll < 1.6) { 
-                result = CHARACTERS.filter(c => c.stars === 5)[Math.floor(Math.random()*4)];
-                state.pity = 0;
-            } else if (roll < 12) {
-                result = CHARACTERS.filter(c => c.stars === 4)[Math.floor(Math.random()*4)];
-            } else {
-                result = WEAPONS[Math.floor(Math.random()*WEAPONS.length)];
-            }
-        } else {
-            result = WEAPONS[Math.floor(Math.random()*WEAPONS.length)];
-        }
-
-        state.owned[result.id] = (state.owned[result.id] || 0) + 1;
-        save();
-        showSummon(result);
-    }
-
-    function showSummon(item) {
-        const overlay = document.getElementById('summon-overlay');
-        const colors = { 3: 'var(--order)', 4: 'var(--epic)', 5: 'var(--legend)' };
-        overlay.style.display = 'flex';
-        overlay.style.boxShadow = `inset 0 0 100px ${colors[item.stars]}`;
-        document.getElementById('summon-reveal-name').innerText = item.name;
-        document.getElementById('summon-reveal-name').style.color = colors[item.stars];
-        document.getElementById('summon-reveal-rarity').innerText = "⭐".repeat(item.stars);
-    }
-
-    function closeSummon() { document.getElementById('summon-overlay').style.display = 'none'; }
-
-    // --- EXPEDITION SYSTEM ---
-    function renderRifts() {
-        const list = document.getElementById('expedition-list');
-        list.innerHTML = "";
-        const now = Date.now();
-
-        MISSIONS.forEach(m => {
-            const endTime = state.activeMissions[m.id];
-            let actionBtn = "";
-
-            if (!endTime) {
-                actionBtn = `<button onclick="startMission('${m.id}')">Start Mission</button>`;
-            } else if (now < endTime) {
-                const secLeft = Math.ceil((endTime - now) / 1000);
-                actionBtn = `<button disabled style="background:#1e293b">${secLeft}s Left</button>`;
-            } else {
-                actionBtn = `<button onclick="claimMission('${m.id}')" style="background:var(--creation)">Claim Loot</button>`;
-            }
-
-            list.innerHTML += `
-                <div class="item-card">
-                    <div style="font-size: 2.5em; margin-bottom: 10px;">${m.icon}</div>
-                    <strong>${m.name}</strong>
-                    <p style="color:var(--gold)">Reward: ${m.reward} 🟡</p>
-                    ${actionBtn}
-                </div>`;
-        });
-    }
-
-    function startMission(id) {
-        const mission = MISSIONS.find(m => m.id === id);
-        state.activeMissions[id] = Date.now() + (mission.duration * 1000);
-        save();
-        renderRifts();
-    }
-
-    function claimMission(id) {
-        const mission = MISSIONS.find(m => m.id === id);
-        state.coins += mission.reward;
-        delete state.activeMissions[id];
-        save();
-        renderRifts();
-    }
-
-    // --- UI RENDERING ---
-    function updateUI() {
-        document.getElementById('coins-display').innerText = state.coins;
-        document.getElementById('orbs-display').innerText = state.orbs;
-        document.getElementById('pity-ui').innerText = `Pity: ${state.pity}/80`;
-    }
-
-    function renderArchive() {
-        const list = document.getElementById('archive-list');
-        list.innerHTML = "";
-        [...CHARACTERS, ...WEAPONS].forEach(item => {
-            const count = state.owned[item.id] || 0;
-            list.innerHTML += `
-                <div class="item-card ${count > 0 ? 'rarity-'+item.stars : ''}" style="opacity: ${count > 0 ? 1 : 0.4}">
-                    <div style="font-size:0.7em">${item.type}</div>
-                    <strong>${item.name}</strong>
-                    <div>${count > 0 ? 'Lv. '+count : 'LOCKED'}</div>
-                </div>`;
-        });
-    }
-
-    function renderSanctuary() {
-        const list = document.getElementById('sanctuary-list');
-        list.innerHTML = "";
-        CHARACTERS.forEach(c => {
-            const count = state.owned[c.id] || 0;
-            if(count > 1) {
-                list.innerHTML += `
-                    <div class="item-card rarity-${c.stars}">
-                        <h3>${c.name}</h3>
-                        <p>Duplicates: ${count - 1}</p>
-                        <p>Stats: HP ${c.hp + (count*100)} / ATK ${c.dmg + (count*10)}</p>
-                    </div>`;
-            }
-        });
-        if(list.innerHTML === "") list.innerHTML = "<p>No duplicates found. Keep summoning!</p>";
-    }
-
-    // Initialize
-    updateUI();
-    renderArchive();
-</script>
 </body>
 </html>
